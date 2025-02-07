@@ -1,30 +1,24 @@
-import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import Title from "./components/Title";
-
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
+import SongContextProvider from "./song-context";
+import AuthContextProvider from "./auth-context";
 
 export const metadata = {
   title: "Underground Music",
-  description: "Site for underground/unknown artists with little or no following",
+  description:
+    "Site for underground/unknown artists with little or no following",
 };
 
 export default function RootLayout({ children }) {
   return (
     <html lang="en">
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-      >
-        <Title/>
-        {children}
+      <body>
+        <AuthContextProvider>
+          <SongContextProvider>
+            <Title />
+            {children}
+          </SongContextProvider>
+        </AuthContextProvider>
       </body>
     </html>
   );

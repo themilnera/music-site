@@ -30,14 +30,17 @@ const Submit = () => {
       userId: userId,
     };
     try {
-      await addSong(newSong);
+      const songId = await addSong(newSong);
+      //addSong should now return the document id so we can push to the page
+      
       setSongName("");
       setArtistName("");
       setAudioUrl("");
       setGenre("");
       setArtworkUrl("");
       console.log("song submitted");
-      //get the song's id so you can router.push() to the page after submitting
+      router.push(`listen/${songId}`);
+      
     } catch (error) {
       console.error("error submitting song: ", error);
     }

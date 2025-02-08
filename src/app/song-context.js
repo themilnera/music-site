@@ -52,6 +52,7 @@ export default function SongContextProvider({ children }) {
         genre: song.genre,
         userId: song.userId,
       });
+      return docSnap.id;
     } catch (error) {
       console.error("Error adding song: ", error);
       throw error;
@@ -67,6 +68,7 @@ export default function SongContextProvider({ children }) {
       console.error(`Error getting song: ${id}`, error);
     }
   };
+
 
   const getRandSong = async () => {
     try {

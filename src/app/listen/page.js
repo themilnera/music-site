@@ -15,23 +15,27 @@ const Listen = () => {
   const [song, setSong] = useState(dummySong);
   const contextRef = useContext(songContext);
   const [loading, setLoading] = useState(true);
+  const [nextSong, setNextSong] = useState(false);
 
-  const getRandSong = async () => {
+  const getRandSong = async (lastSong) => {
     try {
       setLoading(true);
-      const s = await contextRef.getRandSong();
-      console.log(s);
-      setSong(s);
+      let newSong;
+
+      do {
+        newSong = await contextRef.getRandSong();
+      } while (newSong.url === lastSong.url);
+
+      setSong(newSong);
       setLoading(false);
     } catch (error) {
       console.error("Random song getting failed", error);
     }
   };
-  /////useEffect to get the song?
-  //trying to return random song, something wrong with song useState
+
   useEffect(() => {
-    getRandSong();
-  }, []);
+    getRandSong(song);
+  }, [nextSong]);
 
   if (loading) {
     return <div>Loading...</div>;
@@ -39,7 +43,17 @@ const Listen = () => {
 
   return (
     <div className="flex justify-center">
-      <AudioPlayer song={song} />
+      <div className="flex justify-center">
+        <AudioPlayer song={song} />
+      </div>
+      <button
+        className="bg-blue-800 rounded-md p-2 hover:border-2 self-start mt-10"
+        onClick={() => {
+          setNextSong((prev) => !prev);
+        }}
+      >
+        Next Song
+      </button>
     </div>
   );
 };

@@ -21,6 +21,7 @@ const Submit = () => {
     e.preventDefault();
 
     const userId = user.uid;
+    
     const newSong = {
       name: songName,
       artist: artistName,
@@ -32,7 +33,7 @@ const Submit = () => {
     try {
       const songId = await addSong(newSong);
       //addSong should now return the document id so we can push to the page
-      
+
       setSongName("");
       setArtistName("");
       setAudioUrl("");

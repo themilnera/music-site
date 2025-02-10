@@ -17,13 +17,14 @@ const Register = () => {
 
     const { emailPasswordSignUp } = useContext(authContext);
     const { googleLoginHandler } = useContext(authContext);
+    const { addUserDoc } = useContext(authContext);
 
     const handleRegister = async (e) => {
         e.preventDefault();
         try {
             if(password1 === password2){
-                await emailPasswordSignUp(email, password1);
-                alert("Sign-up Successful");
+                const user = await emailPasswordSignUp(email, password1);
+                await addUserDoc(user);
                 router.push("/");
             }
             else{
@@ -36,13 +37,14 @@ const Register = () => {
 
     const handleGoogleLogin = async ()=>{
         try {
-            await googleLoginHandler();
+            const user = await googleLoginHandler();
+            await addUserDoc(user);
             router.push("/");
         } catch (error) {
             setMessage("Google Sign-Up Failed");
         }
     }
-
+    //either way we need to push the userId and email and role to the users collection, user doc
 
   return (
     <div>

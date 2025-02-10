@@ -1,14 +1,58 @@
 "use client";
-import { useState } from "react";
+import { useState, useContext, useEffect } from "react";
+import { authContext } from "../auth-context";
 import Link from "next/link";
 import ReactAudioPlayer from "react-audio-player";
 import { sendStatusCode } from "next/dist/server/api-utils";
+import { useParams } from "next/navigation";
+import { songContext } from "../song-context";
+import { useRouter } from "next/navigation";
 
 export default function AudioPlayer({ song }) {
   const [autoplayOn, setAutoplayOn] = useState(false);
+  const { user, getUserDoc } = useContext(authContext);
+  const { removeSong } = useContext(songContext);
+  const [userRole, setUserRole] = useState("user");
+  const router = useRouter();
+  const params = useParams();
+
   const handleAutoplay = () => {
     setAutoplayOn(!autoplayOn);
   };
+
+  const handleRemove = async () => {
+    try {
+      const id = params.id;
+      await removeSong(id);
+      console.log("Deleted song");
+      router.push("/");
+    } catch (error) {
+      console.error("failed to delete song", error);
+    }
+  };
+
+  const handleUpdate = async () => {
+    try {
+      const id = params.id;
+      router.push(`/update/${id}`);
+    } catch (error) {
+      console.error("redirect to update page failed", error);
+    }
+  };
+
+  useEffect(() => {
+    const fetchUserRole = async () => {
+      console.log(user);
+      if (user) {
+        const userData = await getUserDoc(user);
+        if (userData) {
+          setUserRole(userData.role);
+          console.log(`User ${userData.email} is ${userData.role}`);
+        }
+      }
+    };
+    fetchUserRole();
+  }, [user]);
 
   return (
     <div className="flex items-center flex-col mt-10">
@@ -43,11 +87,17 @@ export default function AudioPlayer({ song }) {
             Autoplay
           </button>
         )}
-
+        {userRole === "admin" && (
+          <>
+            <button className="ml-2 text-red-600" onClick={handleRemove}>
+              Delete
+            </button>
+            <button className="ml-2 text-green-600" onClick={handleUpdate}>
+              Update
+            </button>
+          </>
+        )}
       </div>
-      <button className="bg-blue-800 rounded-md p-2 hover:border-2">
-        Next Song
-      </button>
 
       <Link className="text-blue-500 mt-10 underline " href={song.url}>
         Link to song

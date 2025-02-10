@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useContext } from "react";
+import { useState, useContext, useEffect } from "react";
 import SearchBar from "../components/SearchBar";
 import { songContext } from "../song-context";
 import { GrLinkNext, GrLinkPrevious } from "react-icons/gr";
@@ -12,17 +12,24 @@ const Search = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [hasMore, setHasMore] = useState(false);
 
-  const { searchSongs } = useContext(songContext);
+  const { searchSongs, getAllSongs } = useContext(songContext);
 
   const handleSearch = async (e) => {
     try {
       e.preventDefault();
       setLoading(true);
       setCurrentPage(1);
-
-      const { results, hasMore } = await searchSongs(searchTerm);
-      setResults(results || []);
-      setHasMore(hasMore);
+      if(searchTerm.trim() === ""){
+        const {results, hasMore} = await getAllSongs(1);
+        setResults(results || []);
+        setHasMore(hasMore);
+      }
+      else{
+        const { results, hasMore } = await searchSongs(searchTerm);
+        setResults(results || []);
+        setHasMore(hasMore);
+        
+      }
     } catch (error) {
       console.error("failed to search", error);
       setHasMore(false);
@@ -30,6 +37,27 @@ const Search = () => {
       setLoading(false);
     }
   };
+
+  useEffect(()=>{
+    const fetchSongs = async()=>{
+      try{
+        setSearchTerm("");
+        setLoading(true);
+        setCurrentPage(1);
+        const {results, hasMore} = await getAllSongs(1);
+            setResults(results || []);
+            setHasMore(hasMore);
+      }
+      catch(error){
+        console.error("Failed to get songs", error);
+      }
+      finally{
+        setLoading(false);
+      }
+    }
+    fetchSongs();
+  }, []);
+
 
   const goToPage = async (page) => {
     setLoading(true);

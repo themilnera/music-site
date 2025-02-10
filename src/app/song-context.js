@@ -69,6 +69,26 @@ export default function SongContextProvider({ children }) {
     }
   };
 
+  const updateSong = async(id, data)=>{
+    try {
+      const docRef = doc(db, "songs", id);
+      await updateDoc(docRef, data);
+    } catch (error) {
+      console.error("Failed to update song", error);
+    }
+  }
+
+  const removeSong = async(id)=>{
+    try{
+      const docRef = doc(db, "songs", id);
+      await deleteDoc(docRef);
+      console.log("Deleted doc successfully");
+    }
+    catch(error){
+      console.error("Failed to delete doc", error);
+    }
+  }
+
 
   const getRandSong = async () => {
     try {
@@ -88,26 +108,35 @@ export default function SongContextProvider({ children }) {
     }
   };
 
-  const getAllSongs = async () => {
+  const getAllSongs = async (page = 1, pageSize = 10) => {
     try {
       const docRef = collection(db, "songs");
-      const docSnap = await getDocs(docRef);
+      let q = query(docRef, orderBy("name"), limit(pageSize));
+      if (page > 1){
+        const offset = (page -1) * pageSize;
+        const offSetQuery = query(docRef, orderBy("name"), limit(offset));
+        const offsetSnapshot = await getDocs(offSetQuery);
+        const lastVisible = offsetSnapshot.docs[offsetSnapshot.docs.length - 1];
+        if(lastVisible){
+          q = query(docRef, orderBy("name"), startAfter(lastVisible), limit(pageSize));
+        }
+      }
+      const querySnap = await getDocs(q);
+      const results = querySnap.docs.map((doc)=> ({id: doc.id, ...doc.data()}))
 
-      const songs = [];
-      docSnap.forEach((doc) => {
-        songs.push(doc.data());
-      });
-      return songs;
+
+      return{
+        results,
+        hasMore: querySnap.docs.length === pageSize,
+      };
     } catch (error) {
       console.error("Failed to get all songs", error);
+      return {results: [], hasMore: false}
     }
   };
 
   const searchSongs = async (searchTerm, page = 1, pageSize = 10) => {
     try {
-      if (!searchTerm) {
-        
-      }
       searchTerm.toLowerCase();
       const docRef = collection(db, "songs");
 
@@ -128,7 +157,7 @@ export default function SongContextProvider({ children }) {
         );
         const offsetSnapshot = await getDocs(offsetQuery);
         const lastVisible =
-          offsetSnapshot.docs[(offsetSnapshot.docs.length = 1)];
+          offsetSnapshot.docs[(offsetSnapshot.docs.length - 1)];
         q = query(q, startAfter(lastVisible));
       }
 
@@ -156,7 +185,7 @@ export default function SongContextProvider({ children }) {
 
   return (
     <songContext.Provider
-      value={{ addSong, getSong, getAllSongs, searchSongs, getRandSong }}
+      value={{ addSong, getSong, removeSong, getAllSongs, searchSongs, getRandSong, updateSong }}
     >
       {children}
     </songContext.Provider>

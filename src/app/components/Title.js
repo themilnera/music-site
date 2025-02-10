@@ -35,7 +35,7 @@ const Title = () => {
             </Link>
             :
             <Link href="/logout" className="ml-auto mr-7 mt-4">
-            Logout
+            Logout {user.email}
             </Link>
             }
             

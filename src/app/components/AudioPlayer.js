@@ -64,6 +64,8 @@ export default function AudioPlayer({ song }) {
         <span className="text-green-500">{song.name}</span>{" "}
         <span className="text-green-700">by</span>{" "}
         <span className="text-emerald-800">{song.artist}</span>
+        <span className="text-blue-800 ml-2">({song.genre})</span>
+
       </h1>
 
       {song.imgUrl && (

@@ -20,15 +20,15 @@ const Title = () => {
   };
   return (
     <>
-      <div className="relative flex justify-left h-[7vh] bg-zinc-700 border-2 border-zinc-600 z-10">
+      <div className="relative flex justify-left lg:h-[7vh] sm:h-[9vh] bg-zinc-700 border-2 border-zinc-600 z-10">
         <button onClick={toggleShowSidebar} className="mr-2 ml-2">
           <TfiAlignJustify className="size-8" />
         </button>
-        <Link href="/" className="text-2xl title mt-3 ml-1">
+        <Link href="/" className="lg:text-2xl sm:text-sm title lg:mt-3 sm:mt-7 ml-1">
           Underground Radio
         </Link>
         <Link href="/search">
-          <FaSearch className="size-5 mt-4 ml-5 mr-4" />
+          <FaSearch className="size-5 lg:mt-4 ml-5 mr-4 sm:mt-6" />
         </Link>
         {!user ? <Link href="/login" className="ml-auto mr-7 mt-4">
             Login

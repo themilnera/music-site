@@ -6,19 +6,13 @@ import { getAuth } from 'firebase/auth'
 
 const firebaseConfig = {
 
-  apiKey: "AIzaSyCYnMC2mabJm-1TSoiZxASuBNSAKdNYZ-k",
-
-  authDomain: "music-site-479c0.firebaseapp.com",
-
-  projectId: "music-site-479c0",
-
-  storageBucket: "music-site-479c0.firebasestorage.app",
-
-  messagingSenderId: "45404718462",
-
-  appId: "1:45404718462:web:b4aa44b77d75e5db781f2f",
-
-  measurementId: "G-H1GYZPCJGF"
+  apiKey: process.env.NEXT_PUBLIC_API_KEY,
+  authDomain: process.env.NEXT_PUBLIC_AUTH_DOMAIN,
+  projectId: process.env.NEXT_PUBLIC_PROJECT_ID,
+  storageBucket: process.env.NEXT_PUBLIC_STORAGE_BUCKET,
+  messagingSenderId: process.env.NEXT_PUBLIC_MESSAGING_SENDER_ID,
+  appId: process.env.NEXT_PUBLIC_APP_ID,
+  measurementId: process.env. NEXT_PUBLIC_APP_MEASUREMENT_ID,
 
 };
 
